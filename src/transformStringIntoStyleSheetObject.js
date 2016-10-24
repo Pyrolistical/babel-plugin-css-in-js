@@ -1,12 +1,11 @@
 import assert from 'assert';
-import { types as t } from 'babel-core';
 import gonzales from 'gonzales-pe';
 import camelcase from 'camelcase';
 
-export default function transformStringLiteralIntoStyleSheetObject(expr) {
-  assert(t.isStringLiteral(expr), 'must be a string literal');
+export default function transformStringIntoStyleSheetObject(expr) {
+  assert(typeof expr === 'string', 'must be a string');
 
-  const cssTree = gonzales.parse(expr.value, {
+  const cssTree = gonzales.parse(expr, {
     syntax: 'scss',
   });
 

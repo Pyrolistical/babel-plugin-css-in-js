@@ -96,6 +96,15 @@ describe('babel-plugin-css-in-js', () => {
     testStyleRule(css, 'test-styles-foo', 'margin: 0');
   });
 
+  it('works with template literal as argument', () => {
+    const css = testTransformed({
+      from: 'var styles = cssInJS(`.foo { margin-top: -10px }`);',
+      to:   'var styles = { foo: "test-styles-foo" };'
+    });
+
+    testStyleRule(css, 'test-styles-foo', 'margin-top: -10');
+  });
+
   it('works with string literal as argument', () => {
     const css = testTransformed({
       from: 'var styles = cssInJS(".foo { margin-top: -10px }");',
