@@ -68,21 +68,41 @@ describe('babel-plugin-css-in-js', () => {
     assert.strictEqual(css, '');
   });
 
+  it('works with object expression as argument', () => {
+    const css = testTransformed({
+      from: 'var styles = cssInJS({ foo: { marginTop: -10 } });',
+      to:   'var styles = { foo: "test-styles-foo" };'
+    });
+
+    testStyleRule(css, 'test-styles-foo', 'margin-top: -10');
+  });
+
   it('works without a babel filename option', () => {
     const css = testTransformed({
-      from: 'var styles = cssInJS({ foo: { marginTop: -10, content: "foo" } });',
+      from: 'var styles = cssInJS({ foo: { marginTop: -10 } });',
       to:   'var styles = { foo: "unknown-styles-foo" };',
       options: { babel: { filename: undefined } }
     });
 
-    assert(css.indexOf('.unknown-styles-foo') > -1);
+    testStyleRule(css, 'unknown-styles-foo', 'margin-top: -10');
   });
 
   it('works with function expression as argument', () => {
-    testTransformed({
-      from: 'var styles = cssInJS(function() { return { foo: { margin: 0 }, "$body": { padding: 0 } }; });',
+    const css = testTransformed({
+      from: 'var styles = cssInJS(function() { return { foo: { margin: 0 } }; });',
       to:   'var styles = { foo: "test-styles-foo" };'
     });
+
+    testStyleRule(css, 'test-styles-foo', 'margin: 0');
+  });
+
+  it('works with string literal as argument', () => {
+    const css = testTransformed({
+      from: 'var styles = cssInJS(".foo { margin-top: -10px }");',
+      to:   'var styles = { foo: "test-styles-foo" };'
+    });
+
+    testStyleRule(css, 'test-styles-foo', 'margin-top: -10');
   });
 
   it('raises error if argument is neither a object expression nor a function expression', () => {
